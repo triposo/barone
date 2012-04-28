@@ -146,6 +146,11 @@ public class EllipsizingTextView extends TextView {
         }
         workingText = workingText.substring(0, lastSpace);
       }
+      
+      // Remove any trailing periods
+      while(workingText.endsWith("."))
+        workingText = workingText.substring(0, workingText.length()-1);
+      
       workingText = workingText + ELLIPSIS;
       ellipsized = true;
     }
