@@ -19,6 +19,7 @@ package com.triposo.barone;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 
 public class EllipsizingTextView extends TextView {
   private static final String ELLIPSIS = "…";
+  private static final Pattern DEFAULT_END_PUNCTUATION = Pattern.compile("[\\.,…;\\:\\s]*$", Pattern.DOTALL);
 
   public interface EllipsizeListener {
     void ellipsizeStateChanged(boolean ellipsized);
@@ -45,6 +47,10 @@ public class EllipsizingTextView extends TextView {
   private int maxLines;
   private float lineSpacingMultiplier = 1.0f;
   private float lineAdditionalVerticalPadding = 0.0f;
+  /**
+   * The end punctuation which will be removed when appending #ELLIPSIS.
+   */
+  private Pattern endPunctuationPattern;
 
   public EllipsizingTextView(Context context) {
     this(context, null);
@@ -59,6 +65,11 @@ public class EllipsizingTextView extends TextView {
     super.setEllipsize(null);
     TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.maxLines });
     setMaxLines(a.getInt(0, Integer.MAX_VALUE));
+    setEndPunctuationPattern(DEFAULT_END_PUNCTUATION);
+  }
+
+  public void setEndPunctuationPattern(Pattern pattern) {
+    this.endPunctuationPattern = pattern;
   }
 
   public void addEllipsizeListener(EllipsizeListener listener) {
@@ -146,6 +157,8 @@ public class EllipsizingTextView extends TextView {
         }
         workingText = workingText.substring(0, lastSpace);
       }
+      // We should do this in the loop above, but it's cheaper this way.
+      workingText = endPunctuationPattern.matcher(workingText).replaceFirst("");
       workingText = workingText + ELLIPSIS;
       ellipsized = true;
     }
