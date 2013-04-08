@@ -103,7 +103,9 @@ public class FlowLayout extends ViewGroup {
           currentRow = rowIterator.next();
         }
       }
-      child.layout(x, y, x + childWidth, y + childHeight);
+      // Align the child vertically.
+      int childY = y + (currentRow.height - childHeight) / 2;
+      child.layout(x, childY, x + childWidth, childY + childHeight);
       x += childWidth + horizontalSpacing;
     }
   }
