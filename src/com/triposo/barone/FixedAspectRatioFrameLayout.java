@@ -21,7 +21,7 @@ import android.widget.FrameLayout;
  * Add a new xmlns to the root element of the layout:
  * <Layout
  *     xmlns:android="http://schemas.android.com/apk/res/android"
- *     xmlns:YOUR_APP="http://schemas.android.com/apk/res/YOUR_PACKAGE"
+ *     xmlns:YOUR_APP="http://schemas.android.com/apk/res-auto"
  *
  *
  * <LinearLayout
