@@ -65,6 +65,7 @@ public class EllipsizingTextView extends TextView {
     super.setEllipsize(null);
     TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.maxLines });
     setMaxLines(a.getInt(0, Integer.MAX_VALUE));
+    a.recycle();
     setEndPunctuationPattern(DEFAULT_END_PUNCTUATION);
   }
 
