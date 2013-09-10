@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -95,6 +96,7 @@ public class EllipsizingTextView extends TextView {
     isStale = true;
   }
 
+  @SuppressLint("Override")
   public int getMaxLines() {
     return maxLines;
   }
