@@ -19,6 +19,7 @@ package com.triposo.barone;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
@@ -27,6 +28,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.text.Layout;
 import android.text.Layout.Alignment;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
@@ -44,7 +47,7 @@ public class EllipsizingTextView extends TextView {
   private boolean isEllipsized;
   private boolean isStale;
   private boolean programmaticChange;
-  private String fullText;
+  private CharSequence fullText;
   private int maxLines;
   private float lineSpacingMultiplier = 1.0f;
   private float lineAdditionalVerticalPadding = 0.0f;
@@ -146,23 +149,37 @@ public class EllipsizingTextView extends TextView {
   }
 
   private void resetText() {
-    String workingText = fullText;
+    CharSequence workingText = fullText;
     boolean ellipsized = false;
     Layout layout = createWorkingLayout(workingText);
     int linesCount = getLinesCount();
     if (layout.getLineCount() > linesCount) {
       // We have more lines of text than we are allowed to display.
-      workingText = fullText.substring(0, layout.getLineEnd(linesCount - 1)).trim();
+      workingText = fullText.subSequence(0, layout.getLineEnd(linesCount - 1));
       while (createWorkingLayout(workingText + ELLIPSIS).getLineCount() > linesCount) {
-        int lastSpace = workingText.lastIndexOf(' ');
+        int lastSpace = workingText.toString().lastIndexOf(' ');
         if (lastSpace == -1) {
           break;
         }
-        workingText = workingText.substring(0, lastSpace);
+        workingText = workingText.subSequence(0, lastSpace);
       }
       // We should do this in the loop above, but it's cheaper this way.
-      workingText = endPunctuationPattern.matcher(workingText).replaceFirst("");
-      workingText = workingText + ELLIPSIS;
+      if(workingText instanceof Spannable) {
+        SpannableStringBuilder sb = new SpannableStringBuilder(workingText);
+
+        Matcher m = endPunctuationPattern.matcher(workingText);
+        if(m.find()) {
+          int start = m.start();
+          sb.replace(start, workingText.length(), ELLIPSIS);
+        }
+
+        workingText = sb;
+
+      } else {
+        workingText = endPunctuationPattern.matcher(workingText).replaceFirst("");
+        workingText = workingText + ELLIPSIS;
+      }
+
       ellipsized = true;
     }
     if (!workingText.equals(getText())) {
@@ -208,7 +225,7 @@ public class EllipsizingTextView extends TextView {
     return height / lineHeight;
   }
 
-  private Layout createWorkingLayout(String workingText) {
+  private Layout createWorkingLayout(CharSequence workingText) {
     return new StaticLayout(workingText, getPaint(),
         getWidth() - getPaddingLeft() - getPaddingRight(),
         Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
