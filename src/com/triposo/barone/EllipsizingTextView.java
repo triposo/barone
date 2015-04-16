@@ -120,7 +120,7 @@ public class EllipsizingTextView extends TextView {
       int after) {
     super.onTextChanged(text, start, before, after);
     if (!programmaticChange) {
-      fullText = text.toString();
+      fullText = text;
       isStale = true;
     }
   }
