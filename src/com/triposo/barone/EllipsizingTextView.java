@@ -164,17 +164,13 @@ public class EllipsizingTextView extends TextView {
         workingText = workingText.subSequence(0, lastSpace);
       }
       // We should do this in the loop above, but it's cheaper this way.
-      if(workingText instanceof Spannable) {
-        SpannableStringBuilder sb = new SpannableStringBuilder(workingText);
-
-        Matcher m = endPunctuationPattern.matcher(workingText);
-        if(m.find()) {
-          int start = m.start();
-          sb.replace(start, workingText.length(), ELLIPSIS);
+      if (workingText instanceof Spannable) {
+        SpannableStringBuilder builder = new SpannableStringBuilder(workingText);
+        Matcher matcher = endPunctuationPattern.matcher(workingText);
+        if (matcher.find()) {
+          builder.replace(matcher.start(), workingText.length(), ELLIPSIS);
         }
-
-        workingText = sb;
-
+        workingText = builder;
       } else {
         workingText = endPunctuationPattern.matcher(workingText).replaceFirst("");
         workingText = workingText + ELLIPSIS;
