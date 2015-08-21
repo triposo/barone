@@ -10,6 +10,11 @@ buildscript {
 
 apply plugin: 'com.android.library'
 
+task wrapper(type: Wrapper) {
+  // Run "./gradlew wrapper" after changing this value.
+  gradleVersion = '2.5'
+}
+
 android {
   compileSdkVersion 19
   buildToolsVersion '19.1.0'
